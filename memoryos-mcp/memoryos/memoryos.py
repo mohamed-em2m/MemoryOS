@@ -30,7 +30,7 @@ class Memoryos:
         self.assistant_id = assistant_id
         self.data_storage_path = os.path.abspath(data_storage_path)
         self.llm_model = llm_model
-
+        os.environ["llm_model"]=llm_model
         print(f"Initializing Memoryos for user '{self.user_id}' and assistant '{self.assistant_id}'. Data path: {self.data_storage_path}")
         print(f"Using unified LLM model: {self.llm_model}")
 
