@@ -29,7 +29,7 @@ def compute_segment_heat(session, alpha=HEAT_ALPHA, beta=HEAT_BETA, gamma=HEAT_G
     return alpha * N_visit + beta * L_interaction + gamma * R_recency
 
 class MidTermMemory:
-    def __init__(self, file_path: str, client: OpenAIClient, max_capacity=2000):
+    def __init__(self,model, file_path: str, client: OpenAIClient, max_capacity=2000):
         self.file_path = file_path
         ensure_directory_exists(self.file_path)
         self.client = client
@@ -37,6 +37,7 @@ class MidTermMemory:
         self.sessions = {} # {session_id: session_object}
         self.access_frequency = defaultdict(int) # {session_id: access_count_for_lfu}
         self.heap = []  # Min-heap storing (-H_segment, session_id) for hottest segments
+        self.model_name=model
         self.load()
 
     def get_page_by_id(self, page_id):
@@ -93,7 +94,7 @@ class MidTermMemory:
         session_id = generate_id("session")
         summary_vec = get_embedding(summary)
         summary_vec = normalize_vector(summary_vec).tolist()
-        summary_keywords = list(llm_extract_keywords(summary, client=self.client))
+        summary_keywords = list(llm_extract_keywords(summary, client=self.clien,model=self.model_name))
         
         processed_details = []
         for page_data in details:
